@@ -13,21 +13,7 @@ func main() {
 		}
 	}
 	fmt.Printf("res: %+v\n", res)
-
-	// res, err = Translate("おはよう")
-	// if err != nil {
-	// 	return
-	// }
-	// fmt.Printf("res: %+v\n", res)
 }
-
-// func Greeting() string {
-// 	return "hello"
-// }
-
-// func IsJapanese(greeting string) bool {
-// 	return greeting == "こんちには"
-// }
 
 func IsTypeError(err error) bool {
 	return err == errors.New("unsupported type error")
@@ -42,8 +28,6 @@ func Translate(greeting interface{}) (string, error) {
 	switch v {
 	case "こんにちは":
 		return "hello", nil
-	case "おはよう":
-		return "good morning", nil
 	}
 
 	return "", errors.New("unsupported string error!")
