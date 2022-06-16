@@ -6,13 +6,12 @@ import (
 )
 
 func main() {
-	res, err := Translate("こんにちは")
-	if err != nil {
-		if IsTypeError(err) {
-			return
-		}
+	if _, err := Translate("こんにちは"); err != nil {
+		fmt.Println(err)
+		// if IsTypeError(err) {
+		// 	return
+		// }
 	}
-	fmt.Printf("res: %+v\n", res)
 }
 
 func IsTypeError(err error) bool {

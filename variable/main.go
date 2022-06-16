@@ -25,82 +25,44 @@ func main() {
 		Uses: defsOrUses,
 	}
 
-	// 型チェックを行うための設定
+	// // 型チェックを行うための設定
 	config := &types.Config{
 		Importer: importer.Default(),
 	}
 
-	// 型チェックを行う
 	_, err = config.Check("main", fset, []*ast.File{f}, info)
 	if err != nil {
 		log.Fatal("Error:", err)
 	}
 
-	var res bool
-	var cnt int
+	var isErrCheckExists bool
 	ast.Inspect(f, func(n ast.Node) bool {
-		// 識別子ではない場合は無視
-		blockStmt, ok := n.(*ast.BlockStmt)
-		if !ok {
-			return true
-		}
-		if len(blockStmt.List) == 1 {
-			return true
-		}
-
-		var targetIndex int
-		for index, stmt := range blockStmt.List {
-			assignStmt, ok := stmt.(*ast.AssignStmt)
-			if !ok {
-				continue
-			}
-			callExpr, ok := assignStmt.Rhs[0].(*ast.CallExpr)
-			if !ok {
-				continue
-			}
-			ident, ok := callExpr.Fun.(*ast.Ident)
-			if !ok {
-				continue
-			}
-			if ident.Name == "Translate" {
-				targetIndex = index
-				break
+		if ifStmt, ok := n.(*ast.IfStmt); ok {
+			if assignStmt, ok := ifStmt.Init.(*ast.AssignStmt); ok {
+				if callExpr, ok := assignStmt.Rhs[0].(*ast.CallExpr); ok {
+					if ident, ok := callExpr.Fun.(*ast.Ident); ok {
+						if ident.Name == "Translate" {
+							// fmt.Println(fset.Position(ident.Pos()))
+							if ifSt, ok := ifStmt.Body.List[0].(*ast.IfStmt); ok {
+								if ce, ok := ifSt.Cond.(*ast.CallExpr); ok {
+									if ident, ok := ce.Fun.(*ast.Ident); ok {
+										if ident.Name == "IsTypeError" {
+											isErrCheckExists = true
+											return true
+										} else {
+											return true
+										}
+									}
+								}
+							}
+							return true
+						}
+					}
+				}
 			}
 		}
-
-		targetStmt := blockStmt.List[targetIndex+1]
-		ast.Inspect(targetStmt, func(n ast.Node) bool {
-			ifStmt, ok := targetStmt.(*ast.IfStmt)
-			if !ok {
-				return true
-			}
-
-			for _, l := range ifStmt.Body.List {
-				ifStmt, ok := l.(*ast.IfStmt)
-				if !ok {
-					return true
-				}
-				callExpr, ok := ifStmt.Cond.(*ast.CallExpr)
-				if !ok {
-					return true
-				}
-				ident, ok := callExpr.Fun.(*ast.Ident)
-				if !ok {
-					return true
-				}
-				if ident.Name == "IsTypeError" {
-					cnt++
-					res = true
-					return true
-				}
-			}
-			return true
-		})
 
 		return true
 	})
-
-	fmt.Println("------------------")
-	fmt.Println(res, cnt)
-	fmt.Println("finish")
+	fmt.Printf("isErrCheckExists: %+v\n", isErrCheckExists)
 }
