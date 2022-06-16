@@ -7,10 +7,13 @@ import (
 
 func main() {
 	if _, err := Translate("こんにちは"); err != nil {
+		if IsTypeError(err) {
+			fmt.Println(err)
+		}
+	}
+
+	if _, err := Translate("こんにちは"); err != nil {
 		fmt.Println(err)
-		// if IsTypeError(err) {
-		// 	return
-		// }
 	}
 }
 

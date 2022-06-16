@@ -35,19 +35,19 @@ func main() {
 		log.Fatal("Error:", err)
 	}
 
-	var isErrCheckExists bool
+	result := map[token.Position]bool{}
 	ast.Inspect(f, func(n ast.Node) bool {
 		if ifStmt, ok := n.(*ast.IfStmt); ok {
 			if assignStmt, ok := ifStmt.Init.(*ast.AssignStmt); ok {
 				if callExpr, ok := assignStmt.Rhs[0].(*ast.CallExpr); ok {
 					if ident, ok := callExpr.Fun.(*ast.Ident); ok {
 						if ident.Name == "Translate" {
-							// fmt.Println(fset.Position(ident.Pos()))
+							result[fset.Position(ident.Pos())] = false
 							if ifSt, ok := ifStmt.Body.List[0].(*ast.IfStmt); ok {
 								if ce, ok := ifSt.Cond.(*ast.CallExpr); ok {
-									if ident, ok := ce.Fun.(*ast.Ident); ok {
-										if ident.Name == "IsTypeError" {
-											isErrCheckExists = true
+									if ide, ok := ce.Fun.(*ast.Ident); ok {
+										if ide.Name == "IsTypeError" {
+											result[fset.Position(ident.Pos())] = true
 											return true
 										} else {
 											return true
@@ -64,5 +64,10 @@ func main() {
 
 		return true
 	})
-	fmt.Printf("isErrCheckExists: %+v\n", isErrCheckExists)
+
+	for pos, ok := range result {
+		if !ok {
+			fmt.Printf("%v is not checked!\n", pos)
+		}
+	}
 }
