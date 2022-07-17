@@ -1,7 +1,12 @@
 package example
 
-import "context"
+import (
+	"context"
+	ctxPkg "context"
+)
 
-func OKFunc(ctx context.Context, id int, email string) {}
+func OKFunc1(ctx context.Context, id int, email string) {}
+
+func OKFunc2(ctx ctxPkg.Context, attrs map[string]interface{}) {}
 
 func InvalidFunc(c context.Context) {}
