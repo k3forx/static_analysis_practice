@@ -41,7 +41,10 @@ func main() {
 		log.Fatal("Error:", err)
 	}
 	ctxType := p.Scope().Lookup("Context").Type()
-	it := ctxType.Underlying().(*types.Interface)
+	it, ok := ctxType.Underlying().(*types.Interface)
+	if !ok {
+		log.Fatal("should be found Context interface")
+	}
 
 	ast.Inspect(file, func(n ast.Node) bool {
 		f, ok := n.(*ast.FuncDecl)
