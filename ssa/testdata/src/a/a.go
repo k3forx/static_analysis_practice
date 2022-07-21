@@ -3,9 +3,9 @@ package a
 import "fmt"
 
 func f() {
-	isOdd := "a" == "a"
-	isOdd = IsOdd(3)
-	if isOdd {
+	b1 := IsApple("orange")
+	b1 = IsOdd(3)
+	if b1 {
 		fmt.Println("Odd number")
 	} else {
 		fmt.Println("Even number")
@@ -13,7 +13,7 @@ func f() {
 }
 
 func g() {
-	if isOdd := IsOdd(1); isOdd {
+	if b1 := IsOdd(1); b1 {
 		fmt.Println("Odd number")
 	} else {
 		fmt.Println("Even number")
@@ -22,4 +22,8 @@ func g() {
 
 func IsOdd(num int) bool {
 	return num%2 != 0
+}
+
+func IsApple(str string) bool {
+	return str == "apple"
 }

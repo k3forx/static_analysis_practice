@@ -1,7 +1,7 @@
 package ssa
 
 import (
-	"os"
+	"fmt"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/buildssa"
@@ -23,13 +23,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	funcs := pass.ResultOf[buildssa.Analyzer].(*buildssa.SSA).SrcFuncs
 
 	for _, f := range funcs {
-		f.WriteTo(os.Stdout)
-		// for _, b := range f.Blocks {
-		// 	for _, instr := range b.Instrs {
-		// 		fmt.Printf("%+v\n", instr)
-		// 		fmt.Println()
-		// 	}
-		// }
+		// f.WriteTo(os.Stdout)
+		for _, b := range f.Blocks {
+			fmt.Printf("block: %+v\n", b)
+			for _, instr := range b.Instrs {
+				fmt.Printf("instr: %+v\n", instr)
+			}
+			fmt.Println("--------------------")
+		}
 	}
 
 	return nil, nil
