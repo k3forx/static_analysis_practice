@@ -1,29 +1,22 @@
 package a
 
-import "fmt"
+import (
+	"errors"
+)
 
-func f() {
-	b1 := IsApple("orange")
-	b1 = IsOdd(3)
-	if b1 {
-		fmt.Println("Odd number")
-	} else {
-		fmt.Println("Even number")
+func f() error {
+	if _, err := errFunc(); err != nil {
+		if errCheck(err) {
+			return err
+		}
 	}
+	return nil
 }
 
-func g() {
-	if b1 := IsOdd(1); b1 {
-		fmt.Println("Odd number")
-	} else {
-		fmt.Println("Even number")
-	}
+func errFunc() (int, error) {
+	return 1, errors.New("error")
 }
 
-func IsOdd(num int) bool {
-	return num%2 != 0
-}
-
-func IsApple(str string) bool {
-	return str == "apple"
+func errCheck(err error) bool {
+	return err.Error() == "error"
 }
